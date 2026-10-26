@@ -134,8 +134,16 @@ class ClusterSimilarity(BaseEstimator, TransformerMixin):
             for i in range(self.n_clusters)
         ]
 
-# Step 8 - numeric_pipeline (not yet solved)
-# TODO: implement
+# Step 8 - numeric_pipeline
+from sklearn.pipeline import make_pipeline
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler
+
+def numeric_pipeline():
+    return make_pipeline(
+        SimpleImputer(strategy="median"),
+        StandardScaler()
+    )
 
 # Step 9 - categorical_pipeline (not yet solved)
 # TODO: implement
