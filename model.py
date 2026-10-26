@@ -159,8 +159,58 @@ def categorical_pipeline():
         OneHotEncoder(handle_unknown="ignore")
     )
 
-# Step 10 - build_preprocessing (not yet solved)
-# TODO: implement
+# Step 10 - build_preprocessing
+import numpy as np
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import make_pipeline
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import FunctionTransformer, StandardScaler
+
+def build_preprocessing(n_clusters=10, gamma=1.0, random_state=42):
+
+    # Step 1: Pipeline for skewed numerical features
+    log_pipeline = make_pipeline(
+        SimpleImputer(strategy="median"),
+        FunctionTransformer(
+            np.log,
+            feature_names_out="one-to-one"
+        ),
+        StandardScaler()
+    )
+
+    # Step 2: Combine preprocessing pipelines
+    preprocessing = ColumnTransformer(
+        transformers=[
+            (
+                "log",
+                log_pipeline,
+                [
+                    "total_bedrooms",
+                    "total_rooms",
+                    "population",
+                    "households",
+                    "median_income"
+                ]
+            ),
+            (
+                "geo",
+                ClusterSimilarity(
+                    n_clusters=n_clusters,
+                    gamma=gamma,
+                    random_state=random_state
+                ),
+                ["latitude", "longitude"]
+            ),
+            (
+                "cat",
+                categorical_pipeline(),
+                ["ocean_proximity"]
+            )
+        ],
+        remainder=numeric_pipeline()
+    )
+
+    return preprocessing
 
 # Step 11 - rmse (not yet solved)
 # TODO: implement
