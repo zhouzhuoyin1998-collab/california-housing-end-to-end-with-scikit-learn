@@ -239,8 +239,30 @@ def dummy_baseline_rmse(X, y):
     # Step 4: Calculate RMSE
     return rmse(y, y_pred)
 
-# Step 13 - cross_val_rmse (not yet solved)
-# TODO: implement
+# Step 13 - cross_val_rmse
+import numpy as np
+from sklearn.model_selection import cross_val_score
+
+def cross_val_rmse(model, X, y, cv=3):
+
+    # Step 1: Run K-Fold cross-validation
+    scores = cross_val_score(
+        model,
+        X,
+        y,
+        cv=cv,
+        scoring="neg_root_mean_squared_error"
+    )
+
+    # Step 2: Convert negative RMSE into positive RMSE
+    rmse_scores = -scores
+
+    # Step 3: Return statistics
+    return {
+        "scores": rmse_scores.tolist(),
+        "mean": float(np.mean(rmse_scores)),
+        "std": float(np.std(rmse_scores))
+    }
 
 # Step 14 - linear_model (not yet solved)
 # TODO: implement
